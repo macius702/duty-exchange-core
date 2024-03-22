@@ -25,7 +25,7 @@ def save_user(username):
     """Save a new user to the JSON file."""
     users = load_users()
     if username not in [user['username'] for user in users]:
-        users.append({'username': username, 'hospitals': []})
+        users.append({'username': username, 'hospitals': []})  # Note: Hospitals are now objects
         save_users(users)
         return True
     else:
@@ -46,7 +46,31 @@ def add_hospital_to_user(hospital_name):
     users = load_users()
     for user in users:
         if user['username'] == current_user:
-            user['hospitals'].append(hospital_name)
+            # Ensure hospital is now an object with a name and wards
+            user['hospitals'].append({'name': hospital_name, 'wards': []})
+            break
+    save_users(users)
+
+def add_ward_to_hospital(hospital_name, ward_name):
+    """Add a ward to a specific hospital for the current user."""
+    users = load_users()
+    for user in users:
+        if user['username'] == current_user:
+            for hospital in user['hospitals']:
+                if hospital['name'] == hospital_name:
+                    hospital['wards'].append(ward_name)
+                    break
+    save_users(users)
+
+
+def add_hospital_to_user(hospital_name):
+    """Add a hospital (as an object) to the current user's profile."""
+    users = load_users()
+    for user in users:
+        if user['username'] == current_user:
+            # Ensure hospital is added as an object with 'name' and 'wards'
+            new_hospital = {'name': hospital_name, 'wards': []}
+            user['hospitals'].append(new_hospital)
             break
     save_users(users)
 
@@ -105,13 +129,35 @@ def list_users_page():
 
 def user_profile_page():
     print(f"\nUser Profile: {current_user}")
-    action = input("Would you like to add a hospital? (yes/no): ")
-    if action.lower() == 'yes':
+    users = load_users()
+    current_user_hospitals = []
+    for user in users:
+        if user['username'] == current_user:
+            current_user_hospitals = user['hospitals']
+            break
+    
+    if current_user_hospitals:
+        print("Your Hospitals and Wards:")
+        for hospital in current_user_hospitals:
+            print(f"- {hospital['name']}")
+            for ward in hospital['wards']:
+                print(f"    - Ward: {ward}")
+    else:
+        print("You have no hospitals listed in your profile.")
+    
+    action = input("Would you like to add a hospital or ward? (hospital/ward/no): ")
+    if action.lower() == 'hospital':
         hospital_name = input("Enter the name of the hospital: ")
         add_hospital_to_user(hospital_name)
         print(f"{hospital_name} added to your profile.")
+    elif action.lower() == 'ward':
+        hospital_name = input("Enter the name of the hospital to add a ward to: ")
+        ward_name = input("Enter the name of the ward: ")
+        add_ward_to_hospital(hospital_name, ward_name)
+        print(f"Ward {ward_name} added to hospital {hospital_name}.")
     else:
         print("Returning to main menu.")
+
 
 if __name__ == "__main__":
     main_menu()
