@@ -46,5 +46,45 @@ class TestUserLogin(unittest.TestCase):
         self.assertFalse(login_user("nonexistent_user"))
         self.assertIsNone(actions.current_user)
 
+
+
+import unittest
+from actions import register_user, login_user, add_hospital_to_user, load_users, save_users, current_user  # Adjust imports as needed
+
+class TestHospitalAddition(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        """Set up a clean test environment."""
+        cls.original_users = load_users()
+        save_users([])  # Clear users for testing
+
+    @classmethod
+    def tearDownClass(cls):
+        """Restore the original test environment."""
+        save_users(cls.original_users)
+
+    def setUp(self):
+        """Register and log in a user for each test."""
+        self.test_username = "testuser_hospital"
+        successful_registration = register_user(self.test_username)
+        successful_login = login_user(self.test_username)
+        if not successful_registration or not successful_login:
+            self.fail("Setup failed: could not register or log in test user.")
+
+    def test_add_hospital_to_user(self):
+        """Test adding a hospital to the logged-in user's profile."""
+        hospital_name = "Test Hospital"
+        # Assuming current_user is the logged-in user's username
+        add_hospital_to_user(hospital_name)
+        users = load_users()
+
+        # Find the logged-in test user and their hospitals
+        test_user = next((user for user in users if user['username'] == actions.current_user), None)
+        self.assertIsNotNone(test_user, "Logged-in test user not found.")
+        
+        # Check if the hospital was added
+        hospital_names = [hospital['name'] for hospital in test_user['hospitals']]
+        self.assertIn(hospital_name, hospital_names, "Hospital was not added to the user.")
+
 if __name__ == '__main__':
     unittest.main()
