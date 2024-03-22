@@ -1,1 +1,1 @@
-[{"username": "a", "hospitals": [{"name": "h1", "wards": ["interna", "neurologia"]}, {"name": "h2", "wards": ["chirurgia", "ortopedia"]}]}, {"username": "b", "hospitals": []}, {"username": "new_username", "hospitals": []}, {"username": "testuser", "hospitals": []}]
+[{"username": "a", "hospitals": [{"name": "h1", "wards": ["interna", "neurologia"]}, {"name": "h2", "wards": ["chirurgia", "ortopedia"]}]}, {"username": "b", "hospitals": []}, {"username": "new_username", "hospitals": []}]

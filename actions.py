@@ -113,7 +113,7 @@ def register_page():
     print("\nRegister Page")
     username = input("Choose a username: ")
 
-    registration_success = register_user('new_username')
+    registration_success = register_user(username)
     if registration_success:
         print("User registered successfully.")
     else:
