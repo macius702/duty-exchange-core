@@ -86,5 +86,48 @@ class TestHospitalAddition(unittest.TestCase):
         hospital_names = [hospital['name'] for hospital in test_user['hospitals']]
         self.assertIn(hospital_name, hospital_names, "Hospital was not added to the user.")
 
+
+
+from actions import register_user, login_user, add_hospital_to_user, add_ward_to_hospital, load_users, save_users
+
+class TestWardAddition(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        """Set up a clean test environment."""
+        cls.original_users = load_users()
+        save_users([])  # Clear users for testing
+
+    @classmethod
+    def tearDownClass(cls):
+        """Restore the original test environment."""
+        save_users(cls.original_users)
+
+    def setUp(self):
+        """Prepare a user, hospital, and ward for each test."""
+        self.test_username = "testuser_ward"
+        successful_registration = register_user(self.test_username)
+        successful_login = login_user(self.test_username)
+        self.test_hospital_name = "Test Hospital"
+        add_hospital_to_user(self.test_hospital_name)
+        if not successful_registration or not successful_login:
+            self.fail("Setup failed: could not register or log in test user.")
+
+    def test_add_ward_to_hospital(self):
+        """Test adding a ward to a hospital in the user's profile."""
+        ward_name = "Test Ward"
+        add_ward_to_hospital(self.test_hospital_name, ward_name)
+        users = load_users()
+
+        # Find the logged-in test user
+        test_user = next((user for user in users if user['username'] == actions.current_user), None)
+        self.assertIsNotNone(test_user, "Logged-in test user not found.")
+
+        # Locate the test hospital and verify the ward was added
+        test_hospital = next((hospital for hospital in test_user['hospitals'] if hospital['name'] == self.test_hospital_name), None)
+        self.assertIsNotNone(test_hospital, "Test hospital not found in user profile.")
+
+        # Check if the ward was added
+        self.assertIn(ward_name, test_hospital['wards'], "Ward was not added to the hospital.")
+
 if __name__ == '__main__':
     unittest.main()
