@@ -33,7 +33,8 @@ def login_user(username):
     if username in users:
         current_user = username
         return True
-    return False
+    else:
+        return False
 
 def main_menu():
     global current_user
@@ -54,7 +55,7 @@ def main_menu():
             if login_user(username):
                 print(f"Logged in as {username}.")
             else:
-                print("Username does not exist. Please register first.")
+                print("Error: Username does not exist. Please register first.")
         elif choice == '2':
             register_page()
         elif choice == '3':
