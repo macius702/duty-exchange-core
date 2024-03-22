@@ -21,15 +21,15 @@ def save_users(users):
     with open(USER_FILE, 'w') as file:
         json.dump(users, file)
 
-def save_user(username):
-    """Save a new user to the JSON file."""
+def register_user(username):
+    """Attempt to register a new user."""
     users = load_users()
     if username not in [user['username'] for user in users]:
-        users.append({'username': username, 'hospitals': []})  # Note: Hospitals are now objects
+        users.append({'username': username, 'hospitals': []})
         save_users(users)
-        return True
+        return True  # Indicates the user was successfully registered
     else:
-        return False
+        return False  # Indicates the user already exists
 
 def login_user(username):
     """Simulate user login by setting the current session."""
@@ -112,11 +112,13 @@ def main_menu():
 def register_page():
     print("\nRegister Page")
     username = input("Choose a username: ")
-    
-    if save_user(username):
-        print(f"Registration successful. Welcome, {username}!")
+
+    registration_success = register_user('new_username')
+    if registration_success:
+        print("User registered successfully.")
     else:
-        print("This username already exists. Please try a different one.")
+        print("User already exists.")
+
 
 def list_users_page():
     print("\nList of All Users")
