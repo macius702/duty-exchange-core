@@ -4,6 +4,9 @@ import sys
 # Path to the JSON file where user data is stored
 USER_FILE = 'users.json'
 
+# Current user session (None if no user is logged in)
+current_user = None
+
 def load_users():
     """Load users from the JSON file."""
     try:
@@ -23,16 +26,34 @@ def save_user(username):
     else:
         return False
 
+def login_user(username):
+    """Simulate user login by setting the current session."""
+    global current_user
+    users = load_users()
+    if username in users:
+        current_user = username
+        return True
+    return False
+
 def main_menu():
+    global current_user
     while True:
         print("\nMain Menu")
-        print("1. Login / View Landing Page")
-        print("2. Register")git 
+        if current_user:
+            print(f"You are logged in as: {current_user}")
+        else:
+            print("You are not logged in.")
+        print("1. Login / Change User")
+        print("2. Register")
         print("3. Exit")
         choice = input("Enter choice: ")
         
         if choice == '1':
-            landing_page()
+            username = input("Enter username: ")
+            if login_user(username):
+                print(f"Logged in as {username}.")
+            else:
+                print("Username does not exist. Please register first.")
         elif choice == '2':
             register_page()
         elif choice == '3':
@@ -51,6 +72,11 @@ def register_page():
 
 def landing_page():
     print("\nLanding Page")
+    if current_user:
+        print(f"Logged in as: {current_user}")
+    else:
+        print("No user is currently logged in.")
+    
     users = load_users()
     if users:
         print("List of Users:")
