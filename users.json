@@ -1,1 +1,1 @@
-["matiki", "someone", "user1", "user2"]
+[{"username": "a", "hospitals": ["h1", "h2"]}, {"username": "b", "hospitals": []}, {"username": "c", "hospitals": []}]

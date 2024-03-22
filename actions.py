@@ -11,17 +11,22 @@ def load_users():
     """Load users from the JSON file."""
     try:
         with open(USER_FILE, 'r') as file:
-            return json.load(file)
+            users = json.load(file)
     except FileNotFoundError:
-        return []
+        users = []
+    return users
+
+def save_users(users):
+    """Save the user data to the JSON file."""
+    with open(USER_FILE, 'w') as file:
+        json.dump(users, file)
 
 def save_user(username):
     """Save a new user to the JSON file."""
     users = load_users()
-    if username not in users:
-        users.append(username)  # Store just the username
-        with open(USER_FILE, 'w') as file:
-            json.dump(users, file)
+    if username not in [user['username'] for user in users]:
+        users.append({'username': username, 'hospitals': []})
+        save_users(users)
         return True
     else:
         return False
@@ -30,11 +35,20 @@ def login_user(username):
     """Simulate user login by setting the current session."""
     global current_user
     users = load_users()
-    if username in users:
+    if username in [user['username'] for user in users]:
         current_user = username
         return True
     else:
         return False
+
+def add_hospital_to_user(hospital_name):
+    """Add a hospital to the current user's profile."""
+    users = load_users()
+    for user in users:
+        if user['username'] == current_user:
+            user['hospitals'].append(hospital_name)
+            break
+    save_users(users)
 
 def main_menu():
     global current_user
@@ -47,7 +61,8 @@ def main_menu():
         print("1. Login / Change User")
         print("2. Register")
         print("3. List All Users")
-        print("4. Exit")
+        print("4. User Profile")
+        print("5. Exit")
         choice = input("Enter choice: ")
         
         if choice == '1':
@@ -61,6 +76,11 @@ def main_menu():
         elif choice == '3':
             list_users_page()
         elif choice == '4':
+            if current_user:
+                user_profile_page()
+            else:
+                print("Please login to view your profile.")
+        elif choice == '5':
             sys.exit("Thank you for using the app.")
         else:
             print("Invalid choice. Please try again.")
@@ -79,9 +99,19 @@ def list_users_page():
     users = load_users()
     if users:
         for user in users:
-            print(user)
+            print(user['username'])
     else:
         print("No users registered yet.")
+
+def user_profile_page():
+    print(f"\nUser Profile: {current_user}")
+    action = input("Would you like to add a hospital? (yes/no): ")
+    if action.lower() == 'yes':
+        hospital_name = input("Enter the name of the hospital: ")
+        add_hospital_to_user(hospital_name)
+        print(f"{hospital_name} added to your profile.")
+    else:
+        print("Returning to main menu.")
 
 if __name__ == "__main__":
     main_menu()
