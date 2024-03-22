@@ -45,7 +45,8 @@ def main_menu():
             print("You are not logged in.")
         print("1. Login / Change User")
         print("2. Register")
-        print("3. Exit")
+        print("3. List All Users")
+        print("4. Exit")
         choice = input("Enter choice: ")
         
         if choice == '1':
@@ -57,6 +58,8 @@ def main_menu():
         elif choice == '2':
             register_page()
         elif choice == '3':
+            list_users_page()
+        elif choice == '4':
             sys.exit("Thank you for using the app.")
         else:
             print("Invalid choice. Please try again.")
@@ -70,16 +73,10 @@ def register_page():
     else:
         print("This username already exists. Please try a different one.")
 
-def landing_page():
-    print("\nLanding Page")
-    if current_user:
-        print(f"Logged in as: {current_user}")
-    else:
-        print("No user is currently logged in.")
-    
+def list_users_page():
+    print("\nList of All Users")
     users = load_users()
     if users:
-        print("List of Users:")
         for user in users:
             print(user)
     else:
